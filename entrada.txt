@@ -1,0 +1,1118 @@
+Introducción
+
+Para empezar, supongamos que debemos de implementar una pequeña parte de una aplicación de
+gestión en la que hay que tener en cuenta las posibles operaciones que se realizan con cadenas
+de caracteres. Si pensamos un poco, se nos pueden ocurrir las siguientes funciones: pasar toda
+la cadena a mayúsculas, para poder comparar adecuadamente, crear una cadena nueva a partir de
+ya se verá qué, leer una cadena desde el teclado, imprimirla en un fichero de texto siguiendo
+un cierto formato, copiar una cadena en otra, buscar una cadena en otra, concatenar dos cadenas
+y, seguramente, algunas más. Es posible que se haya pensado implementar exclusivamente las
+necesarias, o lo que es peor, "cuando sea necesario se programará cada una de ellas".
+Estas son las opciones que debemos descartar al resolver un problema de este tipo, aunque la
+primera de las tres se acerca un poco a la forma correcta de actuar.
+En primer lugar, para poder resolver cualquier problema, debemos recoger toda la información
+posible que afecte a nuestra implementación. De esta forma sabremos para qué servirá nuestro
+código, dónde será utilizado, qué cantidad de memoria está disponible, cómo son los datos,
+cuánto de rápido debe de ejecutarse, qué debe y no debe de hacer, cuáles serán las entradas y
+las salidas, en definitiva, nuestra solución debe partir de un análisis exhaustivo.
+Este es el principal problema: debemos aceptar que "sin un análisis correcto del problema jamás
+llegaremos a tener una buena solución". Si no pensamos así, nada tenemos que hacer, puesto que
+la solución que encontremos tendrá errores y, por lo tanto, no será fiable. Por supuesto que
+hacer un perfecto análisis es extremadamente difícil, pero esa no es nuestra tarea, nosotros
+partiremos de un problema ya analizado y especificado en el cual  se da respuesta a todas las
+preguntas que hayan de formularse.
+Sigamos entonces con nuestro problema. Nuestras cadenas de caracteres contendrán nombres y
+apellidos de españoles, su lectura se hará por el teclado, por un lado el nombre y por otro los
+apellidos, debiéndose concatenar ambas entradas y, por último, será necesario hacer
+comparaciones entre ellas. Demos por acabado el estudio para no complicar excesivamente el
+problema, en definitiva es un ejemplo.
+Antes de pensar en una solución, veamos otros puntos de interés. ¿Cuántas veces utilizaremos el
+código que vamos a generar?, ¿implementaremos nosotros toda la aplicación?, ¿será utilizado
+nuestro código fuente por otras personas de nuestra "empresa" en otras aplicaciones?. Si vamos
+a utilizar varias veces nuestro código, debemos de implementarlo de una forma robusta para que
+sea portable de una aplicación a otra. Si, además, nosotros no codificamos toda la aplicación,
+alguien utilizará nuestro código, por lo que debemos dejar información suficiente como para que
+nuestros compañeros lo utilicen sin ningún problema. Incluso, debemos generar mucha
+documentación, aunque seamos nosotros los únicos que lo usemos, ya que dentro de un tiempo,
+seguramente no nos acordaremos de los detalles de implementación. Como vemos, no es fácil
+abordar un problema con garantías de éxito, pero además debemos pensar en cosas que, a priori,
+parecía que no influían.
+Estamos complicando en exceso nuestro ejemplo y, seguramente, la solución que vamos a ofrecer a
+continuación puede parecer incompleta, o peor todavía, fuera de contexto, pero sirva de
+justificación que lo que queremos hacer es dejar patente la necesidad, no sólo de abstraer
+nuestros problemas, sino de documentarlos adecuadamente y por "documentación" no nos referimos
+a comentarios en el código fuente.
+Tomando en cuenta lo dicho, necesitamos un tipo de datos para cadenas de caracteres que
+necesita un "lector" por teclado, una función de concatenación, una nueva ordenación del código
+ASCII (para la "ñ" y todas las vocales acentuadas), de forma que podamos decir que,
+alfabéticamente, "Muñoz" va antes que "Murillo".
+La función de concatenación parece la más sencilla y para nosotros lo será, ya que tomaremos la
+que ofrezca nuestro lenguaje de programación (aun así, no es un problema trivial como veremos),
+sin embargo, el orden alfabético no es un problema trivial, debemos crear un nuevo orden y, por
+lo tanto, una nueva función de comparación de cadenas. En cuanto a la función de lectura,
+podemos pensar que, para facilitar el problema, leerá carácter a carácter, transformándolo a
+mayúsculas (cuidado con la "ñ") y eliminando los acentos y diéresis de las vocales.
+Sin embargo podíamos haber optado por otra solución. Dejaremos al usuario que se encargue de
+introducir las cadenas de "forma adecuada" (aunque parece una mala solución, y a nuestro juicio
+lo es, en los centros de salud de la Seguridad Social no introducen ni las conectivas entre
+apellidos ni los acentos, por ejemplo "María de la Torre Cañada" aparece como "Maria Torre
+Cañada", al menos figura la "ñ") para evitar los problemas de los acentos y las conectivas,
+quedándonos sólo nuestra querida "ñ". De esta forma la función de lectura se simplifica
+bastante, al igual que la concatenación, ya que ahora no hay que pensar el orden de
+concatenación (en las guías de teléfonos aparecería "Torre Cañada, María de la").
+Podemos seguir dando soluciones, pero parece que estamos llegando a donde pretendíamos desde un
+principio: ¿cómo debemos implementar nuestra solución?. La respuesta no debe darse al cómo sino
+al qué. Lo que debemos tener claro es qué debemos implementar, el cómo, por ahora, no es
+importante. Alguien necesita tres funciones y la forma en que trabajen le trae sin cuidado, lo
+que quiere saber es qué hacen, cómo se utilizan, qué necesitan y qué devuelven, así de fácil,
+los detalles de implementación supone que son correctos, porque para eso nos pagan.
+Entonces, ¿cómo se resuelve?. La solución a nuestro problema la dimos justo al enunciarlo, es
+decir, la solución es el resultado del análisis, la especificación de nuestro problema, el
+resto, como programadores que somos, debe de ser coser y cantar.
+Para poder afrontar la programación de cualquier problema, no sólo es necesario el dominio de
+las técnicas de programación y de las estructuras de datos, sino que es fundamental aplicar con
+excelencia y precisión las técnicas de análisis de la Ingeniería del Software.
+Nosotros vamos a suponer que las técnicas de programación ya han sido aprendidas y que se
+desconoce en gran medida la Ingeniería del Software, centrándonos en el estudio de las
+estructuras de datos primarias y de cómo deben documentarse e implementarse.
+
+Descomposición de programas: Modularización
+La meta que se busca al descomponer un programa es la creación de módulos que interaccionen
+entre sí de un modo simple y bien definido. Esto nos asegurará, por una parte, que se pueda
+trabajar de una forma independiente y, por otra, que se mejoren las tareas de mantenimiento y
+modificación de los programas.
+La descomposición de los programas implica que el problema total habrá que dividirlo en
+problemas más pequeños, debiendo de estar éstos al mismo nivel de detalle, pudiéndose resolver
+cada uno de ellos independientemente.
+Las soluciones encontradas en cada uno de los subproblemas deben combinarse, para resolver así,
+el problema en su totalidad. Si la descomposición que se ha realizado no es adecuada, puede
+ocurrir que los problemas que aparecen en los subproblemas sean mayores que si se hubiera
+resuelto el problema original directamente.
+La abstracción va a proporcionar un modo de hacer la descomposición de un programa para tener
+una buena partición, de forma que todos los subproblemas estén al mismo nivel de detalle.
+
+Mecanismos de abstracción en la programación.
+La abstracción puede considerarse una función de uno a muchos, que va desde dominio del
+problema hasta el dominio de la solución. Debemos saber diferenciar entre lo que es el nombre
+de una persona (el concepto de nombre, lo que significa, lo que entendemos por nombre) y su
+representación en una computadora (cómo vamos a almacenarlos, qué queremos hacer con ellos).
+Tenemos que establecer un vehículo que nos permita viajar desde una idea (dominio del problema)
+hasta su codificación (dominio de la solución).
+Sin lugar a dudas, estamos hablando de la abstracción: según el diccionario de la Real Academia
+Española, el significado de abstraer, en su primera acepción es "separar por medio de una
+operación intelectual las cualidades de un objeto para considerarlas aisladamente o para
+considerar el mismo objeto en su pura esencia o noción". Se trata pues de definir esta
+operación intelectual que sea aplicable en nuestro entorno, es decir, en la programación. Los
+propios lenguajes, sean formales o no, proporcionan mecanismos de abstracción, ya que de lo
+escrito puede extraerse mucha información. Nosotros vamos a utilizar estos dos:
+
+* Abstracción por Parametrización, que permite, mediante la introducción de parámetros,
+representar un conjunto potencialmente infinito de computaciones diferentes con un texto de
+programa simple. Estos parámetros se definen de una manera formal (nosotros lo haremos con el
+lenguaje de programación C), y posteriormente tomarán valores concretos.
+* Abstracción por Especificación, consiste en decir qué es lo que hace un procedimiento, pero
+sin mencionar cómo lo hace. Este tipo de abstracción puede realizarse de dos maneras: mediante
+un lenguaje formal, o mediante el lenguaje natural. El lenguaje formal permite la verificación
+automática, e incluso, la obtención automática de la especificación. En cambio, el lenguaje
+informal es más fácil de utilizar pero más difícil de verificar. Sin embargo, incluso en el
+lenguaje natural existen una serie de formalismos, tales como la inclusión de precondiciones y
+postcondiciones, la definición de entradas y la descripción de las salidas de los
+procedimientos.
+
+Clases de abstracción.
+Necesitamos resolver problemas muy dispares y ninguno de estos mecanismos se ajusta a todos
+ellos, es más, ni siquiera hemos definido sobre qué vamos a aplicar la abstracción. Claramente
+podemos observar que si tratamos de resolver el problema de la semisuma de dos números reales,
+bastaría con utilizar la abstracción por parametrización, ya que es un problema que se define a
+sí mismo. Sin embargo, para el problema de la media aritmética, necesitamos saber más cosas,
+por ejemplo, dónde están los datos.
+Si combinamos adecuadamente estos mecanismos que hemos mencionado podemos distinguir las
+siguientes clases de abstracción que, abarcan la mayoría de los problemas que queremos
+resolver:
+
+* Abstracción procedimental o procedural: para resolver problemas simples, ya modularizados
+* Abstracción de datos: para resolver problemas de mayor tamaño, que necesiten estructuras de
+datos complejas e incluso las soluciones ya encontradas de otros problemas.
+* Abstracción de iteración o de control: para efectuar cálculos complejos, procesar
+conjuntamente muchos datos y efectuar operaciones complejas a muchos datos que están
+relacionados entre sí de alguna forma.
+Cada una de estas clases, utilizará los dos mecanismos que hemos visto, incluso con relaciones
+de inclusión, y finalmente descubriremos las similitudes y dependencias que existen entre
+ellas. Sirva como adelanto que la abstracción procedural resuelve los problemas pequeños de la
+abstracción de datos y que la abstracción de iteración resuelve lo que la abstracción de datos
+no puede (quizá hayamos sido demasiado desmedidos en esta última aseveración y debiéramos decir
+que resuelve fácilmente algunos de los problemas que la abstracción de datos resuelve de una
+manera heterodoxa).
+
+Abstracción procedural
+Partamos de un problema que ya ha sido modularizado. Si el análisis fue hecho correctamente,
+cada uno de los módulos debe ser más simple que el problema original. Si todavía es complejo,
+debemos seguir modularizando y si ya es simple es hora de usar la abstracción procedural. Este
+tipo de abstracción se usa con problemas simples, o dicho de otra forma, con problemas que,
+para su resolución, sólo necesitan la implementación de una función o procedimiento. La
+abstracción procedimental combina en un procedimiento la abstracción por parametrización y la
+abstracción por especificación de forma que permite abstraer un evento u operación simple. Por
+un lado, se especifica la cabecera sintáctica correspondiente a la abstracción por
+parametrización y, por otro, la abstracción por especificación que detalla los requerimientos y
+el efecto del procedimiento, indicando además si cambia alguno de los parámetros, es decir, la
+semántica del procedimiento.
+
+Formato
+Nuestro formato para la especificación procedural es muy simple. Dado que la cabecera
+sintáctica detalla cómo usar la función o procedimiento, parece lógico utilizar un lenguaje de
+programación para especificarla, en nuestro caso el lenguaje C. De esta forma, se deja claro el
+número, orden y tipo de parámetros, el valor que devuelve en caso de ser una función, en
+definitiva, todo aquello que se puede extraer fácilmente de la cabecera de una función. Por
+otro lado, la parte semántica se hará en lenguaje natural. Esta parte está compuesta por tres
+apartados es los que se distinguen aspectos de uso y funcionamiento. El formato de
+especificación de la abstracción procedural es el siguiente:
+
+Cabecera en C
+Requerimientos
+Modificaciones
+Efecto
+
+En la parte semántica, los requerimientos o restricciones de uso de ese procedimiento serán
+indicados cuando existan valores de las entradas para los que no funciona el procedimiento (más
+adelante ampliaremos este concepto), las modificaciones serán los argumentos de entrada que se
+modifican en el procedimiento, es decir, los parámetros de salida y, por último, el efecto
+describe el comportamiento del procedimiento, debe indicar las funciones del procedimiento para
+todas las entradas que no hayan sido excluidas en la cláusula de requerimientos.
+Cuando veamos la abstracción de datos, definiremos de nuevo la abstracción procedural, ya que
+en ese caso, existen ciertas apreciaciones en cuanto al sentido de cada una de las componentes
+del formato de la abstracción procedural, que hacen insuficiente lo que en este momento vemos.
+Piense en que los parámetros de entrada de una función no son solamente los explícitamente
+expresados en su cabecera, sino que además llevan acompañados una serie de "parámetros
+implícitos" (tales como la memoria libre, el bloque de memoria más grande y los permisos de
+acceso a los recursos del sistema) que limitan su uso y que pueden suponer una excepción en el
+funcionamiento de la función especificada. Teniendo en cuenta esta última apreciación, baste
+con expuesto anteriormente y hagamos algunos ejemplos.
+
+Ejemplos
+Procedimiento para concatenar dos strings: Observe que no hay requerimientos, por lo que para
+cualesquiera que sean los valores de los dos parámetros de entrada la función devolverá la
+concatenación.
+
+char *concat (char *a, char *b);
+Efecto: Devuelve un nuevo string conteniendo los caracteres de a (en el orden en que están en
+a), seguidos por los caracteres de b (en el orden en que aparecen en el string b).
+
+Procedimiento para quitar duplicados en un vector de enteros: En este ejemplo el vector es
+modificado (se está pasando un puntero al vector de enteros), o lo que es lo mismo, se crea una
+nueva copia del vector sin repetidos que es el devuelto en *a. Por a[1:3,4] entendemos un
+vector con dos elementos cuyo índice inferior es el 1, es decir, a[1]=3 y a[2]=4.
+
+void quitar_dupli(int **a, int len);
+Modifica: a;
+Efecto: Elimina todos los elementos duplicados de a. El límite inferior se mantiene, y el resto
+puede cambiar. Si a=[1: 3, 13, 3, 6] la salida es  a=[1: 3, 13, 6].
+
+Busca un elemento dentro de un vector de enteros: aunque no se dice nada sobre la
+implementación, debe observar cómo el hecho de estar ordenado y ser un vector limita las
+posibilidades.
+
+int buscar(int *a, int x);
+Requiere: a está ordenado ascendentemente.
+Efecto: Si x(a, devuelve i / a[i]=x. En otro caso, i será mayor que el límite superior de a.
+
+Ventajas de la abstracción procedural.
+Al usar abstracción procedural para especificar nuestras funciones y procedimientos debemos
+tener presente que el contenido de la especificación determina qué hace y cómo se utiliza y
+nada se menciona de cómo se realiza la tarea; aunque, como ya hemos visto en el último ejemplo,
+en algunas ocasiones es difícil aislar la especificación de la implementación. Como norma
+general, evitaremos mencionar cualquier información con respecto a la implementación de la
+función que se está especificando.
+Al ser una especificación tan general, se consigue abstraer la propia identidad de los objetos
+pudiendo ser válida la misma especificación para varias funciones que realicen la misma
+operación, pero sobre tipos de igual naturaleza pero distintos, haciendo muy pocos cambios (que
+pueden ser automatizados). Un claro ejemplo de lo que estamos diciendo lo encontramos en la
+ordenación de un vector: no es relevante para la especificación que lo que se esté ordenando
+sean número reales o números enteros, lo importante es que se ordena un vector.
+Por otro lado, al indicar la cabecera sintáctica estamos dando información de su uso, dando el
+número de argumentos, su situación y su tipo, disminuyendo el código a escribir. Aunque pueda
+parecer que esta ventaja no es tal, debemos pensar la ingente cantidad de información que
+genera el análisis, diseño e implementación de una aplicación cualquiera, por lo que ahorrar en
+este sentido hace que se gane tiempo y, por tanto, se abarate el coste de producción.
+Indudablemente la abstracción procedural es fácil de llevarla a cabo, ya que sólo nos ocupamos
+del qué y no del cómo, indicamos qué hace la función pero no mencionamos el algoritmo que la
+resuelve, de hecho la implementación de ese procedimiento es irrelevante, pudiendo haber varias
+implementaciones de un mismo procedimiento.
+Además de estas ventajas, los programas que hayan sido implementados basándose en la
+abstracción procedimental son mejores ya que tienen localidad y modificabilidad, localidad en
+el sentido de que un procedimiento puede ser leído o escrito sin tener que fijarse en ningún
+otro procedimiento del programa y modificabilidad puesto que existe poca relación entre el
+código de los distintos procedimientos de un programa y, por tanto, se puede modificar una
+función sin que ello afecte al resto del código.
+
+Implementación.
+Una vez especificado el procedimiento, ya sabemos qué es lo que hay que implementar: el
+problema ya está resuelto. En la implementación se debe producir el comportamiento definido en
+la especificación; es decir, habrá que modificar las entradas que aparecen en la cláusula
+MODIFICA, detectar las condiciones de la cláusula REQUIERE, y producir las salidas de acuerdo
+con los EFECTOS. El resto es metodología de la programación, estructuras de datos y teoría de
+algoritmos, por lo que deberemos describir el algoritmo usado (que deberá ser el mejor),
+documentar el código, usar la estructura de datos adecuada, así como utilizar los mismos
+nombres que se han mencionado en la especificación.
+Haremos especial hincapié en comprobar que se cumplen los requisitos. Es necesario verificar
+que todos y cada uno de los requerimientos, si alguno no se cumple, habrá que parar la
+ejecución del procedimiento devolviendo los valores detallados en la cláusula de EFECTO. Sin
+embargo, existe la excepción a esta regla. En los ejemplos anteriores, concretamente el
+tercero, indica en sus requerimientos que el vector debe estar ordenado. La búsqueda binaria o
+dicotómica, encuentra un elemento en tiempo logarítmico, mientras que comprobar si un vector
+está ordenado emplea un tiempo lineal, por lo que se gasta más tiempo en verificar los
+requerimientos que en ejecutar la propia función. En estos casos, debemos "eliminar" el
+requerimiento y no comprobarlo, es más, ni siquiera debemos mencionarlo. Como veremos en su
+momento, existe otro sitio en la especificación donde se indican estos detalles, por ahora,
+tomemos como regla general el no declarar requerimientos que no se puedan comprobar, o que su
+comprobación emplee más tiempo que la propia función.
+
+Generalización de la abstracción procedural.
+Hemos mencionado una ventaja de la abstracción procedimental que nos parece especialmente
+buena: con ella se consigue abstraer la identidad de los objetos. Esto nos hace pensar que
+podemos especificar funciones de una forma general, de manera que sea válida independientemente
+de la estructura de datos con la que trabaje la función. Incluso hemos mencionado que podría
+automatizarse.
+Estamos hablando de la generalización de la abstracción procedimental, que se consigue
+parametrizando el tipo de elementos para la que está definida esa operación. Esta
+generalización consiste en definir una clase de abstracciones de forma que cada miembro de la
+clase pertenece a un tipo y éste ha de satisfacer los requerimientos.
+Para poder aplicar generalización es necesario definir funciones sobre el tipo base e incluir
+éstas en la implementación. Para poner un ejemplo, volvamos a la búsqueda de un elemento en un
+vector. Estos requerimientos van a tener ahora un formato especial: habrá que mencionar en
+ellos el conjunto de operaciones que debe poseer el tipo.
+
+int buscar ([tipo] *a, [tipo] x);
+Requiere: [tipo] ha de tener las operaciones "EQUAL", "LT"; a debe estar ordenado
+ascendentemente según el orden generado por LT.
+Efecto: Si x está en a, devuelve i tal que a[i]=x. En otro caso, i>límite superior de a.
+
+Si ahora queremos especificar el procedimiento para un tipo concreto, se ha de sustituir el
+parámetro [tipo] por el tipo base del problema, y eliminar las restricciones asociadas a la
+parametrización del tipo, que en nuestro ejemplo sería la definición del orden.
+Sin embargo, en algunas ocasiones y teniendo en cuenta que el lenguaje C así lo permite,
+podremos pasar estas funciones como parámetros, ya que si lo que realizan es una tarea conocida
+y simple (como es el caso que nos ocupa) en la parte sintáctica aparecería información más que
+suficiente para comprender el comportamiento. De esta forma, teniendo en cuenta la función
+"strcmp" de C, que compara cadenas de caracteres y devuelve un valor negativo, cero o positivo
+si el primer argumento es menor, igual o mayor, respectivamente, que el segundo, podríamos
+pasar directamente una función que se llamara "compar" que actuara de igual manera, quedando
+entonces la especificación de la siguiente forma:
+
+int buscar ([tipo] *a, [tipo] x, int (*compar)(const void *, const void *));
+Requiere: a debe estar ordenado ascendentemente según compar.
+Efecto: Si x está en a, devuelve i tal que a[i]=x. En otro caso, i>límite superior de a.
+
+Diseño de abstracciones procedurales.
+Para diseñar mediante abstracción procedural hay que tener en cuenta varias cosas. En primer
+lugar hablemos de minimalidad. Los requerimientos y restricciones del procedimiento deben ser
+sólo los necesarios; si faltan, no será exacto y fallará para algunos casos, pero si detallamos
+demasiado podemos eliminar algunos casos que sí que deben computarse. Pongamos el ejemplo de la
+temperatura. ¿Cuál es un límite inferior razonable para expresar la temperatura en grados
+centígrados?. Si se piensa en un valor excesivamente bajo por ejemplo -300, corremos el riesgo
+asumir como válida la temperatura de -274ºC, por otro lado, si pensamos en un valor de -250 no
+podremos anotar la temperatura de ebullición del hidrógeno.
+Debemos además tener en cuenta la generalidad. Una especificación adecuadamente general, sirve
+para más de un problema. El uso de los tipos generalizados hace que nuestras especificaciones
+serán válidas para muchos casos, evitando trabajo y errores. Por último, la simplicidad, ya que
+el propósito debe estar bien definido, con lo que se lograrán procedimientos con funciones muy
+concretas. Debemos descartar por tanto el diseño de "funciones oráculo" que dan respuesta a
+multitud de problemas según el valor de algún parámetro. Por el contrario, hay que tener
+cuidado en la aplicación de la simplicidad, ya que el abuso puede llevar a un número demasiado
+elevado de módulos tremendamente sencillos que complican la implementación de cualquier
+programa.
+
+Abstracción de datos
+Demos un paso más y no nos quedemos con especificar funciones aisladas. Queremos ahora resolver
+problemas más grandes para poder seguir aplicando nuestros dos mecanismos de abstracción.
+Pensemos en los números enteros. Prácticamente la totalidad de las aplicaciones que
+implementemos utilizan los números enteros y quizá no hayamos caído en la cuenta de que
+continuamente programamos lo mismo: cómo se puede evitar el desbordamiento en las sumas y
+productos, generar código seguro para divisiones entre cero... en definitiva, estamos siempre
+programando las mismas excepciones. ¿Por qué no programar algo que sea utilizado por todos los
+programas que requieran números enteros?.
+Hasta ahora no podemos, debemos ampliar la abstracción procedural, ya que ésta no entiende de
+datos, sólo de funciones y procedimientos. Hagamos una visión global del problema, intentando
+extraer mediante abstracción, lo que realmente se utiliza de los enteros. En primer lugar, un
+número entero se representa mediante una "variable" (descartamos las constantes por cuestiones
+de generalidad). Esta variable puede ser algún parámetro de alguna función sobre enteros:
+sumar, multiplicar, dividir, incremento, etc.
+¿Por qué no asociar a la variable una serie de funciones cuyos parámetros son variables del
+mismo tipo?. Se trata entonces de definir cuáles son las funciones que operan sobre los números
+enteros, asociarles la variable de alguna forma y definirles un nombre nuevo. De esta forma, si
+implementamos las excepciones en estas funciones podríamos utilizar uniformemente el nuevo tipo
+entero, evitando tener que duplicar código y gastar tiempo en programación.
+Definamos un Tipo de Datos Abstracto (TDA) como la unión lógica de datos y funciones sobre
+ellos que tiene entidad propia. El concepto es muy amplio, ya que no decimos nada sobre si los
+datos son simples o complejos, de hecho ni siquiera hemos definido el concepto de dato que,
+simplemente, puede no existir físicamente.
+Con los tipos de datos abstractos podemos resolver la gran mayoría de los problemas porque los
+datos que contiene, bien pueden ser de otro TDA diferente y, así, seguir anidando tantas veces
+como se quiera (quizás ahora se entienda el porqué de empezar hablando de modularización).
+En la abstracción de datos podemos aplicar tanto la abstracción por parametrización como por
+especificación: abstracción procedural para las funciones, abstracción por especificación para
+definir la "estructura de datos" y de nuevo las usaremos para definir conceptos que aún están
+pendientes.
+Con la abstracción de datos por especificación conseguimos incluir las operaciones como partes
+del tipo y aislarlas así de su representación. Así, por ejemplo, el tipo INTEGER se define como
+los números enteros más las operaciones propias de los enteros. Pero del tipo así definido, no
+se va a conocer la representación ni la implementación de las operaciones (más delante
+volveremos sobre esta opacidad).
+
+Formato
+Con la especificación se define el estado y el comportamiento del TDA. Por tanto, una
+especificación de un TDA va a contener la especificación de las operaciones propias del TDA
+(que serán especificadas utilizando abstracción procedural) y de los contenidos (con
+abstracción por especificación en lenguaje natural). El formato de la especificación de un TDA
+va a ser el siguiente:
+
+CABECERA:
+Tipo de Dato Nombre_Tipo = Lista_de_operaciones
+
+DESCRIPCIÓN:
+Descripción
+% Definición global del TDA.
+
+Primitivas
+% Especificación procedural de cada operación
+Cabecera procedural
+Precondiciones (se corresponden con los requerimientos).
+Modificaciones.
+Postcondiciones (se corresponden con el efecto).
+
+REQUERIMIENTOS DE USO:
+Requerimientos de uso
+
+Usa
+% Ficheros que necesita compilar previamente.
+Declaración
+% Declaración del dato.
+Compilación
+% Instrucciones de compilación
+
+En la cabecera nos encontramos con el nombre genérico de TDA junto con todas las funciones que
+operan sobre él y que a partir de ahora llamaremos "primitivas". Si se eligen adecuadamente los
+nombres se puede obtener de esta parte mucha información (sobre esto volveremos más tarde). En
+la parte de "DESCRIPCIÓN" nos encontramos con el "qué" del TDA, es decir, qué es y para qué
+sirve. Como mencionamos antes, este es el lugar para definir las excepciones globales o de
+comprobación lenta, como por ejemplo la que vimos en uno de los ejemplos: "el vector debe de
+estar ordenado". Además debemos expresar otros detalles importantes que veremos más adelante. A
+continuación se mencionan las primitivas, especificadas con abstracción procedural y que, por
+tanto, siguen las normas de este tipo de abstracción. La última parte hace referencia al uso
+del TDA: los ficheros que utiliza en su compilación, cómo declarar una "variable" de este TDA y
+las instrucciones para la compilación.
+Una especificación del TDA es, más que útil, imprescindible, ya que nos obliga a plantearnos
+muchas cuestiones del TDA antes de hacer la implementación (análisis), y sobre todo cuestiones
+de requerimientos y trato de los casos límite. Además, la especificación sirve de documentación
+para todo el proceso de producción de software. El resultado es un documento de especificación
+en el que se puede implementar el código fuente que referencia sin necesidad de más
+información.
+
+Polimorfismo
+Al igual que en la abstracción procedural hablábamos de generalización de tipos, pretendemos
+ahora extender este concepto para obtener sus ventajas en la abstracción de datos. No es
+difícil conseguirlo, pero no disponemos de una manera estándar de hacerlo. El lenguaje de
+programación empleado nos impone sus restricciones y, en general, ningún lenguaje nos permite
+polimorfismo en tiempo de ejecución (no estamos hablando del polimorfismo de la programación
+orientada a objetos, sino de una generalización de tipos).
+Por lo tanto, dado que vamos a apoyarnos en el lenguaje C y éste no tiene la característica que
+buscamos, no tendremos más remedio que buscar una solución en tiempo de compilación (veremos
+como "saltarnos estas restricciones y crear polimorfismo en tiempo de ejecución, aunque a costa
+de perder fiabilidad en nuestras implementaciones).
+Para conseguir polimorfismo necesitamos parametrizar los elementos que componen el TDA. Para
+esto hay que tener en cuenta la inclusión de requerimientos con respecto a las operaciones que
+deben contener el "tipo base", seguramente resuelto con la función "compar" que ya hemos
+mencionado.
+Introduciremos una nomenclatura para nuestras funciones de forma que en el propio nombre de las
+primitivas irá incluido el tipo base a que se refiere. Decidimos definir los nombres de las
+primitivas de la siguiente forma:
+
+TDA_TipoBase_Primitiva
+Supongamos una cola de números enteros. La primitiva para sacar un elemento podría llamarse
+"cola_ent_saca", mientras que en nuestro ejemplo de los números enteros (que no existe
+polimorfismo, pueden ser únicamente números enteros) la primitiva que multiplica dos números se
+llamaría "ent_multi". ¿Dónde está el polimorfismo?. Hay que buscarlo: Supongamos ahora la misma
+cola pero de números reales. La misma primitiva de sacar elementos se llamaría
+"cola_real_saca", si ahora sacamos "factor común" podríamos confeccionar un documento general
+para colas donde la primitiva para sacar elementos se llamaría "cola_[tip]_saca". Sólo tenemos
+que instanciar nuestro documento de especificación, cambiando [tip] por una palabra
+significativa. Pero eso no es todo, porque nos hace falta cambiar el tipo base. En este
+documento general debemos indicar como tipo base alguna palabra que también tendremos que
+instanciar. En el ejemplo de la cola general podríamos nombrar al tipo base como "typo" y para
+instanciar sobre números enteros, cambiamos "typo" por "int". Además, este cambio tendremos que
+hacerlo en el código fuente, que también tendrá que estar generalizado.
+La principal ventaja de utilizar este sistema, es que tanto los documentos de especificación
+que se generan como las implementaciones son tremendamente seguras; aunque su defecto es que
+los cambios han de hacerse manualmente o implementar, que parece más fiable, preprocesadores
+para nuestros documentos generalizados, tanto de especificación como de implementación. En
+temas sucesivos veremos cómo evitar estos problemas utilizando punteros sin tipo.
+
+Ocultamiento de información
+Hagamos un experimento. Responda a la siguiente pregunta: ¿Cree interesante evitar accesos no
+deseados a sus datos?. Una respuesta afirmativa parece lo sensato. Ahora conteste a esta: ¿Cree
+que en sus implementaciones debiera prohibirse usted mismo el acceso no controlado a sus
+propios datos?. Nos estamos refiriendo acceder a un campo de una estructura definida por usted.
+Si la respuesta a esta última pregunta fue que no, debe usted reflexionar. Si obliga a todo el
+mundo, incluido usted, a entrar a sus datos por el camino que usted diseñe, podrá tener control
+absoluto de lo que haya pasado, este pasando o vaya a pasar. De esta forma, podrá detectar
+errores, corregirlos sobre la marcha o simplemente atenderlos apropiadamente. Piense en TDA
+para la edad de una persona. ¿Cree usted razonable que se intente almacenar una edad de 233
+años? Si la actualización del TDA se hace exclusivamente con una primitiva diseñada por usted,
+seguro que habrá tomado este error en cuenta, pero si permite el acceso libre a sus datos, nada
+impide que, por error, se cambie la información con valores incorrectos.
+Esta es la importancia del ocultamiento de información y es imprescindible sacar partido de él,
+ya que, como hemos visto, nos ayuda a ser más felices mientras programamos en la tarea de
+evitar errores. Veamos cómo.
+Una vez definido un TDA cualquiera, es hora de usarlo y en esta labor nada es distinto al de
+los tipos ya definidos: se accede a los objetos del TDA a través de las operaciones definidas
+para este tipo. En general, se podrán declarar variables y, lo que es más importante, definir
+un nuevo TDA basado en otro.
+Si el lenguaje de programación incluye posibilidad de ocultamiento de información, se va
+asegurar el acceso a los objetos del TDA a través de sus operaciones, ocultando la estructura
+de datos y la implementación, con lo que se logra una independencia entre el tipo abstracto y
+el tipo implementado. Así, se va a poder cambiar la representación y la implementación sin
+tener que modificar los programas. Solo habrá, si acaso, que volverlos a compilar.
+Si el lenguaje de programación es el Pascal, concretamente Turbo-Pascal, podemos definir
+nuestras estructuras de datos en la parte "implementation" de las unidades que creemos,
+accediendo a ella utilizando la instrucción "absolute".
+Si el lenguaje es C, podemos definir nuestro tipo en el fichero de cabeceras (en el .h) como un
+puntero a una estructura que se encuentra definida en el fichero de funciones (en el .c),
+obviando el "warning" que nos aparece al compilar. De esta forma, no dejamos acceso a nuestra
+estructura de datos porque no es visible la estructura (estamos suponiendo que se crea una
+biblioteca con el TDA, por lo que solo es visible el fichero de cabeceras). Este sistema es el
+que vamos a seguir aquí, ya que todas las estructuras de datos que veremos están escritas en
+lenguaje C.
+
+Implementación
+Una vez que se ha especificado convenientemente, la implementación de un TDA debe comenzar con
+la selección de la representación del TDA, es decir la estructura de datos. La representación
+elegida debe permitir que todas las primitivas sean codificables de una forma simple y
+eficiente, aunque la representación va a depender del conjunto de operaciones que se precisen.
+Tendremos en cuenta en la codificación todo lo mencionado sobre polimorfismo y ocultamiento de
+información y, por supuesto, las primitivas han de identificarse con lo expresado en el
+documento de especificación.
+La implementación de un TDA va a contener dos tipos diferentes: uno, el tipo abstracto, y otro
+el tipo REP. El tipo abstracto es donde se define el TDA, mientras que el tipo REP va a
+contener la representación elegida para ese tipo abstracto. En la implementación de las
+funciones se trabajará con el tipo REP. En la interfaz, en cambio, se trabajará con el tipo
+abstracto. En realidad el tipo abstracto no existe en la implementación, simplemente le
+asociamos un nombre. El verdadero tipo abstracto vive en la mente del programador: todos
+sabemos lo que significa "edad" y ese concepto no cambia al darle un nombre dentro de nuestro
+código fuente, antes al contrario, al leer ese nombre en el programa, sabemos que nos referimos
+a nuestro concepto de edad y ése es el tipo abstracto.
+
+El tipo REP
+Por ahora veamos al tipo REP como la estructura de datos que soporta nuestro tipo abstracto. De
+esta forma es fácil asumir la correspondencia existente entre el dominio del problema
+(abstracto) y el dominio de la solución (representación).
+Sigamos con el ejemplo de la edad. ¿Cuál puede ser la estructura de datos adecuada para
+almacenar la edad de una persona?. Parece que un entero corto sin signo es la mejor estructura,
+no hay edades negativas y nadie vivirá más de 255 años. Sin embargo, si al preguntar por la
+edad de una persona nos dicen que tiene 233 años, seguramente creeremos que nos están tomando
+el pelo. En el libro Guinness de los récords aparece 122 como la edad más alta alcanzada por
+una persona (en el norte del Líbano vive un anciano que según las gentes del lugar tenía una
+edad de 135 años en el año 1.997, pero no hay registro oficial). Por lo tanto suponer que a
+partir de 150 años el dato debe ser erróneo puede ser aceptable (incluso menos).
+Ya tenemos la estructura de datos y los valores correctos luego ya podemos decidir el tipo REP.
+La representación puede ser un número entero en el intervalo entero [0, 255] y de todos los
+valores posibles sabemos el significado de todos ellos, sea válido o no.
+Debemos ahora ampliar estos dos último detalles. Si en el contenido de nuestra estructura de
+datos está el número 47, ¿qué significa?. ¿Cuál es la regla que nos define los valores
+correctos de la representación?. Las respuestas las encontramos definiendo la función de
+abstracción y el invariante de la representación.
+
+La función de abstracción.
+Una vez elegida la representación del TDA hay que indicar cual es la función de abstracción.
+Esta función va a relacionar los objetos del tipo REP y los objetos del tipo abstracto, o lo
+que es lo mismo, nos da el significado de un dato de la representación: tiene 47 años. La
+función de abstracción la definimos como:
+
+Ab:REP -> A donde
+REP = {Conjunto de objetos del tipo REP}
+A = {Conjunto de objetos del tipo abstracto}
+de forma que (r(REP (Ab(r)=a / a(A))
+
+Esta aplicación Ab es suprayectiva. Veamos un ejemplo con los conjuntos. Sea a={1,2}, que
+pertenece a TDA CONJUNTO. Entonces existen r1=[2,1], r2=[1,2] / r1, r2 (REP.
+
+La función de abstracción se define en dos pasos:
+* Definir los elementos típicos del tipo abstracto.
+* Definir la función de abstracción.
+
+Veamos algunos ejemplos:
+Edad. Una edad típica es x(N / x([0,150]. La función de abstracción es:
+Ab(r)=x si x([0,150], error en otro caso
+
+Conjuntos. Un conjunto típico es {x / x(Z}. La función de abstracción es:
+Ab(r) = {r[i]:inf(r)(i(sup(r)}
+
+Polinomios. Un polinomio típico es C0 + C1x + C2x2 +...+ Cnxn. La función de abstracción es:
+Ab(r)=Ci=r[i+1] si inf(r)(i(sup(r) y Ci=0 en otro caso.
+
+Colas. Una cola típica es una secuencia [q1,q2,....,qn] siendo qn el último elemento en entrar.
+La función de abstracción es:
+Si la lista crece por la derecha Ab(r)=[r(izq),...,r(der)]
+Si la lista crece por la izquierda Ab(r)=[r(der),...,r(izq)]
+
+El invariante de la representación.
+Lo que se pretende con el invariante de la representación es decidir de entre todos los objetos
+del tipo REP cuáles son legítimos y cuáles no. El invariante de la representación es un
+predicado que han de cumplir todos los objetos del tipo REP legítimos en la representación de
+un tipo abstracto.
+I:REP->Boolean
+Cuando todos los objetos del tipo REP son legítimos, el invariante de la representación se
+indica diciendo que es cierto para todos los objetos REP.
+
+Ejemplos:
+
+Edad. El invariante de la representación es x([0,150]
+
+Conjuntos. El invariante de la representación es (i,j(Z / inf(x)(i(j(sup(x)(r[i](r[j], es
+decir, no puede haber duplicados. Si el conjunto estuviera ordenado, se diría r[i](r[j]
+
+Polinomios. El invariante de la representación es
+SI vacío(r) ENTONCES sup(r)=0
+SINO r[inf(r)](0 Y r[sup(r)](0
+
+Colas. El invariante de la representación es cierto.
+
+Con el invariante de la representación se dice qué objetos REP son legítimos para representar
+el tipo de abstracto. Así, la función de abstracción se va a definir únicamente para el
+invariante REP, aunque para el resto de ejemplares de la representación se le dé un significado
+de "incorrecto", es decir, es necesario recorrer todo el conjunto REP aunque sólo se le dé un
+significado real a los elementos que cumplan el invariante de la representación.
+El invariante de la representación y la función de abstracción deben de ser documentados una
+vez que se ha especificado el TDA y se ha elegido la representación del TDA.
+
+Preservación del invariante REP.
+El objeto de introducir el invariante de la representación y la función de abstracción no es
+otro de controlar la naturaleza de los datos que estamos usando. Si en algún momento se pide
+alguno de los datos almacenados en nuestro TDA, no parece conveniente devolver un dato
+incorrecto, lo que nos lleva a pensar en comprobar cuando sea necesario que los datos
+almacenados cumplen el invariante de la representación. Esto hará que nuestro código sea
+robusto y fiable.
+Para comprobar que la implementación está bien hecha hay que verificar que el invariante REP se
+cumple para todos los objetos legítimos. Para ello hay que introducir "código de control" en
+todas las primitivas que tengan como salida objetos del tipo abstracto y observar que estos
+objetos tienen una representación válida.
+Este código de control no es estándar y depende del tipo base del TDA, de la estructura de
+datos y del tipo de primitiva. A veces seremos incapaces de comprobar que se cumple el
+invariante, piense en una cola donde siempre es cierto. Nada podemos asegurar sobre si el orden
+de los datos es realmente el correcto, simplemente aceptamos que es así.
+
+Representaciones mutables.
+Decimos que una representación es mutable si desde el exterior se puede apreciar esta
+mutabilidad. No nos referimos a los contenidos sino a la representación en sí. Si incrementamos
+una edad en 1 año no estaremos hablando de mutabilidad, pero si en esta primitiva (no
+necesariamente ésta), el dato devuelto es otro físicamente, incluso si el contenido sigue
+siendo igual, sí será una representación mutable.
+Imaginemos que la edad se representa mediante un puntero a una variable entera sin signo de
+tamaño 1 byte. Al llamar a nuestra primitiva de incremento se le pasa este puntero que será de
+nuevo alojado en otra dirección distinta con el nuevo valor. Desde el exterior teníamos un
+puntero a cierta dirección y tras la llamada esa dirección ha cambiado, por lo que es mutable.
+Una representación mutable es cómoda de implementar para ciertos problemas, pero es insegura.
+En la mayoría de los casos es recomendable usar representaciones inmutables. Sin embargo, por
+su naturaleza, a veces es más fácil hacerlo de forma mutable. En estos casos intentaremos que
+la mutabilidad no sea visible desde el exterior, ocultando el tipo REP tras una estructura
+inmutable, por lo que todas las primitivas son aparentemente inmutables y por lo tanto más
+seguras. Veremos ejemplos de esta técnica en la implementación de algunos tipos de datos.
+Habitualmente, la mutabilidad y la zona de memoria donde está la representación están
+relacionadas. Si un TDA es mutable seguro que vive en el heap, mientras que si es inmutable
+suele estar en el stack (aunque veremos como representar estructuras inmutables en el heap).
+La mutabilidad de un TDA debe ser descrita en la descripción general del documento de
+especificación junto con su residencia en el heap o en el stack.
+
+El tipo abstracto
+Como ya hemos mencionado, el tipo abstracto es la idea que representa el dato que tenemos
+almacenado. Queremos ahora detallar sus características más relevantes que nos pueden ayudar a
+realizar diseños de más calidad.
+En primer lugar debemos hablar de mutabilidad. En el dominio del problema este concepto cambia
+sensiblemente, ya que ahora no hablamos de direcciones de memoria que cambian, tenemos
+simplemente una idea y ésta permanece invariable. Ahora lo que sí cambia es el significado de
+esta idea: no es lo mismo una edad de 20 años que otra de 50. Este es el matiz que ahora
+queremos introducir. En el dominio del problema la mutabilidad se refiere a valores y es
+imprescindible que en nuestro diseño tengamos en cuenta si existe tal capacidad de cambio.
+Habitualmente todos los tipos abstractos son mutables en el dominio del problema ya que si no
+lo fueran estaríamos hablando de constantes que son problemas triviales y se resuelven de otra
+forma.
+Para evitar problemas con la polisemia del término mutabilidad, hablaremos de modificabilidad
+para el dominio del problema y mutabilidad para el dominio de la solución. Por lo tanto, si un
+TDA es modificable, necesitamos incluir esta capacidad en sus primitivas.
+Esta idea que tenemos de nuestro TDA debe ser especificada de alguna forma para que las
+personas que lo utilicen sepan exactamente a qué se refiere, es decir, debemos encontrar un
+sitio donde plasmar la idea que resuelve nuestro TDA. El lugar adecuado es, de nuevo, en la
+parte de descripción general del TDA. A esta idea le llamaremos "invariante abstracto", ya que
+define exactamente cómo son los objetos del dominio del problema, por lo que una vez
+comprendido el invariante abstracto, el usuario sabrá si le sirve o no.
+Habitualmente el invariante abstracto es una descripción, un tanto peculiar, en lenguaje
+natural del invariante de la representación. Decimos peculiar porque normalmente amplía el
+número de objetos, es decir, el dominio del problema es más grande que el de la solución. Un
+ejemplo claro lo tenemos de nuevo en la edad. No es correcto almacenar una edad de 200 años,
+pero nadie puede asegurar que, por muchas precauciones que tomemos en la implementación,
+casualmente un dato pudiera contener un valor erróneo (una bajada de tensión, un rayo, un
+golpe, etc.). Al ver este número en pantalla, rápidamente decidimos que simplemente es un
+error, por lo que los datos que antes habíamos excluido del dominio de la solución, por no
+cumplir el invariante de la representación, deben ser interpretados de alguna forma ya que sí
+que tienen significado. Para ello está el invariante abstracto. En la descripción del documento
+de especificación indicaremos que si una edad sobrepasa 150 años, será tratada como error.
+Por último queremos dedicar un poco de tiempo a los diferentes tipos de primitivas que podemos
+diseñar, incluyendo información de la importancia de algunos e, incluso, imprescindibles para
+el uso adecuado del TDA.
+
+Definimos seis tipos en los que deben clasificarse todas las primitivas de un TDA:
+* Constructores primitivos: crean objetos nuevos del TDA sin necesidad de otros objetos del
+propio tipo como entrada.
+* Constructores: Crean nuevos objetos tomando como entrada al menos un objeto del TDA.
+* Modificadores: modifican los objetos del TDA asignando nuevos valores a la representación.
+* Mutadores: Mutan al menos un objeto del TDA que se le pasa como parámetro. Estas primitivas
+pueden ser modificadoras.
+* Observadores: toman como entrada objetos del TDA y devuelven los contenidos expresados en
+tipos más simples. Son utilizados para obtener información sobre el estado del objeto del TDA.
+* Destructores: Eliminan un objeto del sistema de información. Esta destrucción puede ser
+física (liberar la memoria que ocupa) o lógica (asignar un valor imposible).
+
+Toda primitiva que se diseñe ha de estar incluido a en uno de estos seis tipos. Es
+imprescindible que el TDA tenga al menos un constructor primitivo y un observador. De nada
+sirve un TDA si no se puede crear el primer objeto del tipo o si no se puede extraer la
+información que está almacenada. Si no existe modificadores habrá que plantearse la utilidad
+del TDA, ya que seguramente se trate de una constante o de un TDA donde la información resida
+en la propia estructura (pilas, colas, etc.), por lo que seguramente existan primitivas
+mutadoras.
+Un TDA sin destructores denota un mal diseño, ya que aunque para el problema específico no sean
+necesarios, estamos tratando de hacer implementaciones que se ajusten al mayor número de
+problemas. Por tanto, al menos debiera de existir un destructor. Para estructuras residentes en
+el stack hablaremos de anuladores en lugar de destructores, de esta forma diferenciamos los dos
+tipos de destrucción.
+El constructor "copia" debiera estar presente en cualquier TDA, ya que la operación de
+asignación es utilizada en todos los programas para casi todos los tipos de variables.
+Para diseñar y especificar un TDA hay que plantearse qué tipo de primitivas precisa y añadirlas
+a las imprescindibles. Una vez elegidas, debemos plantearnos la utilidad, ya que en multitud de
+casos se introducen primitivas que simplemente no hacen nada, o bien, nos faltan las que
+realmente hacen interesante el TDA.
+
+Un ejemplo detallado
+Es hora de aplicar todo lo expresado hasta el momento. Vamos a diseñar un TDA para números
+racionales y recogeremos toda la información que necesitamos antes de su implementación,
+generando todos los documentos que sean necesarios.
+Debemos comenzar con un análisis del problema. Pretendemos crear un TDA para números
+racionales. Al tratarse de un ejemplo, pensaremos en no complicarlo excesivamente y diremos que
+simplemente queremos efectuar las operaciones más habituales: almacenamiento, suma, resta,
+multiplicación y división. Parece interesante mantener simplificadas las fracciones para evitar
+representaciones múltiples para un mismo dato. Por el mismo motivo, debiéramos de tener cuidado
+con los números negativos, ya que el signo puede estar tanto en el numerador como en el
+denominador, así que decidiremos que el signo lo lleve el numerador.
+Si pensamos un poco ya hemos definido el invariante abstracto, al menos para los datos que me
+devuelva el TDA. ¿Es interesante usar estas restricciones para crear nuevos objetos?. Parece
+que no, sería limitarnos las posibles entradas y complicar excesivamente los algoritmos que
+interaccionan con el TDA. Por lo tanto, los datos de entrada serán números enteros
+cualesquiera, mientras que los devueltos seguirán las normas que acabamos de definir. Existe un
+último problema y es la representación del cero. Para evitar múltiples representaciones
+podríamos agrupar todas ellas en una sola.
+Podemos dar por zanjado el análisis. Hemos hecho una descripción de lo que queremos y hemos
+adelantado algunos de los problemas que tendremos. Ahora deberemos de escribir el documento de
+especificación con lo que debiera de hacer nuestro TDA.
+
+Tipo de Datos nr = {init, clear, getn, getd, suma, resta, multi, divi}
+
+DESCRIPCIÓN
+nr es un TDA para los números racionales. Se construye en el stack de forma inmutable. Se
+imponen las restricciones de que cualquier elemento del TDA debe estar simplificado; en caso de
+ser negativo, el signo menos se asigna al numerador, en caso de ser positivo, ambos, numerador
+y denominador, serán positivos.
+
+PRIMITIVAS
+nr nr_init(int n, int d);
+Precondiciones:d!=0.
+Postcondiciones:Devuelve un nr, asignando n al numerador y d al denominador. Si d==0 aborta la
+ejecución mostrando el error en stderr, en otro caso el resultado tiene la máxima
+simplificación y si es negativo, con el signo en el numerador.
+nr nr_clear(void);
+Postcondiciones:Devuelve el nr (0,1).
+int nr_getn(nr a);
+Postcondiciones:Devuelve el numerador del nr a.
+int nr_getd(nr a);
+Postcondiciones:Devuelve el denominador del nr a.
+nr nr_suma(nr a, nr b);
+Postcondiciones:Devuelve el nr a+b simplificado al máximo y en caso de que el resultado sea
+negativo, con el signo en el numerador.
+nr nr_resta(nr a, nr b);
+Postcondiciones:Devuelve el nr a-b simplificado al máximo y en caso de que el resultado sea
+negativo, con el signo en el numerador.
+nr nr_mult(nr a, nr b);
+Postcondiciones:Devuelve el nr a*b simplificado al máximo y en caso de que el resultado sea
+negativo, con el signo en el numerador.
+nr nr_divi(nr a, nr b);
+Precondiciones:El numerador de b ha de ser !=0.
+Postcondiciones:Devuelve el nr a/b simplificado al máximo y en caso de que el resultado sea
+negativo, con el signo en el numerador. Si el numerador de b es cero aborta la ejecución
+mostrando el error en stderr.
+
+REQUERIMIENTOS DE USO
+
+Usa
+void
+Declaración
+nr  dato;
+Compilación
+#include "nraci.h"
+añadir "nraci.c" al proyecto
+
+Este puede ser uno de los muchos diseños para números racionales y en él hemos tomado
+decisiones "por el camino", por ejemplo, ¿por qué no añadimos una precondición para garantizar
+que en todas las primitivas el denominador sea distinto de cero?. Estamos suponiendo que el que
+utiliza nuestro TDA en programador, por lo que siempre inicializa sus variables, por lo que es
+"imposible" que en otra primitiva distinta a nr_init tenga como entrada un número racional que
+viola esa regla.
+
+¿Esta forma de actuar es conveniente?. Efectivamente no lo es, al menos a primera vista. Cuando
+diseñamos un TDA, terminamos con un código que, seguramente tendrá errores. Muchos de ellos
+serán depurados pero otros, por desgracia, no se encontrarán hasta pasado, quizá, demasiado
+tiempo. Por otro lado, los expertos programadores también cometen errores y es una buena ayuda
+colocar esta comprobación por si acaso no inicializó alguna variable del TDA.
+Si todo son ventajas, ¿por qué no las hemos puesto?. El hecho de colocar este tipo de
+precondiciones ralentiza la ejecución. Una buena táctica podría ser utilizar compilación
+condicional para, una vez depurado el programa, eliminar todas estas comprobaciones. De
+cualquier manera, si no hay una imposición fuerte de velocidad, podrían dejarse para mayor
+seguridad.
+Como se habrá visto, no hay regla que garantice una buena actuación en este tipo de problemas,
+más bien es una cosa de sentido común y buen juicio, pero como norma general es aconsejable
+comprobar cuantas más cosas mejor.
+Otra decisión tomada ha sido la forma de actuar con los errores. ¿Por qué abortar la
+ejecución?, simplemente para evitar complicar el ejemplo. Pueden atenderse los errores de
+muchas formas, podemos dejar cierta variable con algún valor para que se pueda comprobar qué
+paso en caso de error, puede sacarse un error en pantalla, devolviendo el control sin que se
+haya hecho nada más, etc., sin embargo nuestro propósito es dejar claro que ahí hubo un error,
+el cómo resolverlo es una tarea que no nos compete, ya que el problema depende de las
+herramientas que se utilicen, la metodología, el entorno de programación, el sistema operativo
+que soportará nuestra aplicación final, etc.
+La última cuestión antes de seguir es ¿por qué se ha escogido una representación inmutable en
+el stack?. No ha habido ninguna razón en especial porque no hemos descrito el problema
+suficientemente, por lo que, si lo hubiésemos hecho en el heap, no hubiera habido mayor
+problema. Sin embargo dado que esto es el primer ejemplo, hemos intentado hacerlo lo más simple
+posible.
+Una vez descrito el documento de especificación pasemos al siguiente punto que es decidir la
+estructura de datos, describir la función de abstracción y detallar el invariante de la
+representación.
+Parece que para lo que pretendemos implementar, según el documento de especificación con dos
+números enteros tenemos bastante:
+
+struct {int numerador; int denominador;}
+
+La función de abstracción no es complicada, ya que los contenidos de la estructura es el número
+que estamos representando, siempre que tomemos el primero como numerador:
+
+Un número racional típico es n/d con n, d(Z
+La función de abstracción es Ad(r)(r.numerador/r.denominador.
+
+En cuanto al invariante de la representación, ya lo hemos mencionado más arriba en lenguaje
+natural. No se permiten denominadores nulos o negativos y la fracción estará simplificada al
+máximo:
+
+MCD(r.numerador, r.denominador)=1 ( r.denominador(0.
+
+Sólo nos queda implementar todo lo que hemos especificado. Vamos a crear dos ficheros, uno con
+las cabeceras y otro con la implementación de las funciones. En identificador del TDA será
+definido en el fichero de cabeceras, mientras que la estructura de datos lo será en el de la
+implementación. Además, incluiremos compilación condicional para evitar múltiples definiciones
+del TDA (más tarde aclararemos estas decisiones).
+
+/**************************nraci.h****************************/
+/*Fichero de cabeceras para uso de objetos*/
+/*NUMERO RACIONAL*/
+/*************************************************************/
+
+#ifndef _NR_TYPO
+
+#define _NR_TYPO
+
+typedef struct nraci nr;
+
+nr nr_init(int n, int d);
+nr nr_clear(void);
+int nr_getn(nr a);
+int nr_getd(nr a);
+nr nr_suma(nr a, nr b);
+nr nr_resta(nr a, nr b);
+nr nr_mult(nr a, nr b);
+nr nr_divi(nr a, nr b);
+
+#endif
+
+/**************************nraci.c****************************/
+/*Módulo en C para uso de objetos*/
+/*NÚMEROS RACIONALES*/
+/*************************************************************/
+
+struct nraci {
+int n;
+int d;
+};
+
+/*************************************************************/
+/*********************OPERACIONES PRIVADAS********************/
+/*************************************************************/
+
+int imcd(int n,int d) { 
+/* máximo común divisor por el algoritmo de Euclides */
+int tmp;
+
+while (n>0) {
+tmp=n;
+n=d%n;
+d=tmp;
+}
+
+/*************************************************************/
+
+void signo(int *n, int *d) {
+
+if (*d<0) {
+*n=-*n;
+*d=-*d;
+}
+}
+
+/*************************************************************/
+
+int valid(nr a) {
+
+return(a.d!=0);
+}
+
+/*************************************************************/
+
+nr smfca(nr a) {
+int mcd;
+
+signo(&(a.n),&(a.d));
+if (a.n<0) mcd=imcd(-a.n,a.d);
+else mcd=imcd(a.n,a.d);
+a.n/=mcd;
+a.d/=mcd;
+return(a);
+}
+
+/*************************************************************/
+/***********************OPERACIONES PUBLICAS******************/
+/*************************************************************/
+
+nr nr_init(int n, int d) {
+nr aux;
+
+if (d!=0) {
+aux.n=n;
+aux.d=d;
+}
+else {
+fprintf(stderr,"nr_init: el denominador es cero.\n");
+exit(2);
+}
+return(smfca(aux));
+}
+
+/*************************************************************/
+
+nr nr_clear(void) {
+
+return(nr_init(0,1));
+}
+
+/*************************************************************/
+
+int nr_getn(nr a) {
+
+return(a.n);
+}
+
+/*************************************************************/
+
+int nr_getd(nr a) {
+
+return(a.d);
+}
+
+/*************************************************************/
+
+nr nr_suma(nr a, nr b) {
+
+if (!valid(a) || !valid(b)) {
+fprintf(stderr,"nr_suma: parámetros incorrectos.\n");
+exit(1);
+}
+return(nr_init(a.n*b.d+a.d*b.n,a.d*b.d));
+}
+
+/*************************************************************/
+
+nr nr_resta(nr a, nr b) {
+
+if (!valid(a) || !valid(b)) {
+fprintf(stderr,"nr_resta: parámetros incorrectos.\n");
+exit(1);
+}
+return(nr_init(a.n*b.d-a.d*b.n,a.d*b.d));
+}
+
+/*************************************************************/
+
+nr nr_mult(nr a, nr b) {
+
+if (!valid(a) || !valid(b)) {
+fprintf(stderr,"nr_mult: parámetros incorrectos.\n");
+exit(1);
+}
+return(nr_init(a.n*b.n,a.d*b.d));
+}
+
+/*************************************************************/
+
+nr nr_divi(nr a, nr b) {
+
+if (!valid(a) || !valid(b) || b.n==0) {
+fprintf(stderr,"nr_divi: parámetros incorrectos.\n");
+exit(1);
+}
+return(nr_init(a.n*b.d,a.d*b.n));
+}
+
+Como se observará hemos introducido las precondiciones de validación de los argumentos (le
+dejamos propuesta la modificación del documento de especificación para que quede acorde con lo
+implementado). Hemos implementado un constructor primitivo, nr_init, dos observadores, nr_getn
+y nr_getd, además de un destructor, nr_clear, y cuatro constructores no primitivos.
+
+Razonamiento sobre la corrección
+Una vez implementado nuestro TDA, debemos comprobar que el invariante abstracto se cumple
+siempre. En primer lugar debemos suponer que los datos que se ofrecen a las funciones son datos
+"correctos", es decir no se le pasan argumentos de otros tipos (haciendo casting), por lo que
+los argumentos serán siempre del tipo que se expresa en las cabeceras de las funciones. Como
+cualquier objeto del TDA devuelto ha de cumplir el invariante de la representación, todo dato
+de entrada será un objeto válido. Observamos en los cuatro constructores de las operaciones
+algebraicas, que terminan con una llamada a la primitiva init, por lo que sólo debemos
+comprobar que los argumentos que se le pasan a esta primitiva son los adecuados.
+Las precondiciones son comprobadas en cada función, aunque no hace falta comprobar los
+denominadores de los argumentos de entrada, porque ya hemos visto que estos datos deben cumplir
+el invariante de la representación, y éstos son analizados en la primitiva init.
+Así pues, comprobando esta primitiva, vemos que en primer lugar se verifica el denominador y
+después se simplifica guardando el signo en el numerador. Luego el diseño del código es
+correcto, sólo falta validarlo con pruebas en una computadora para depurar posibles errores.
+Hemos dejado un punto pendiente. Se trata del problema del cero: cualquier número racional cuyo
+numerador sea cero se está refiriendo al mismo elemento, o mejor dicho, tiene infinitas
+simplificaciones. Dejamos propuesto este problema, simplemente piense en dónde hay que añadir
+una o dos líneas de código para que quede resuelto. Tome el convenio de que todos estos números
+serán representados como 0/1.
+También le dejamos propuesta otra cuestión, ¿por qué no hemos definido polimorfismo en nuestro
+ejemplo de los números racionales?
+
+Adaptación al lenguaje de implementación.
+Si en lugar de haber utilizado C para implementar nuestro TDA hubiéramos usado cualquier otro,
+seguro que el resultado no sería éste. Claramente el diseño del TDA depende del lenguaje
+utilizado en tanto que algunos lenguajes pueden adaptarse más al tipo de estructura que se
+quiere diseñar. Para ello hay que adaptar el diseño de la abstracción al lenguaje, o bien
+inventar convenciones para implementar las abstracciones en un determinado lenguaje. En C hemos
+seguido las siguientes convenciones:
+* Hemos identificado la abstracción procedimental con las funciones con y sin tipo.
+* Todas las excepciones han sido tratadas de igual forma, se escribe un mensaje de error en el
+fichero estándar de errores y se detiene la ejecución.
+* La instanciación y parametrización se hace mediante edición manual.
+* Hemos separado en dos módulos la implementación, uno público, el de cabeceras, y otro con la
+implementación de las funciones que supuestamente estará oculto en una biblioteca de funciones.
+* El nombre de las operaciones es Clase-Nombre del Tipo-Operación.
+* No se puede acceder a los objetos REP desde el exterior.
+* Se hace la implementación en ficheros separados para cada TDA.
+
+Un buen diseño
+Vamos a mencionar una serie de normas que, aunque triviales, definen muy bien cómo hacer un
+buen diseño. En cuanto a la protección del TDA hay que tener en cuenta que a la representación
+sólo se podrá acceder a través de la implementación. Si esto se viola, no se puede garantizar
+la corrección de la abstracción. El método de diseño es más importante que el lenguaje de
+programación que se vaya a utilizar. Es el diseño el que va a permitir una buena modularización
+de las abstracciones, independientemente del lenguaje de programación que se vaya a utilizar.
+Piense siempre en obtener lo siguiente:
+* Que el TDA sea fácil de usar.
+* Si el uso de un TDA es muy frecuente debe realizarse un preprocesador.
+* Que las implementaciones sean fáciles de modificar.
+* Que el TDA sea seguro, de forma que objetos de diferente tipo no puedan usarse en el mismo
+contexto. (Este punto será violado con el tipo "puntero a void").
+
+Si obtenemos un buen diseño, nuestro software tendrá localidad, permitiendo encontrar
+fácilmente cualquier error, por otro lado, el ocultamiento de información hace que los posibles
+errores estén claramente determinados y pueden preverse, por lo que es más fácil obtener código
+correcto.
+
+Criterios de especificación del TDA.
+Debemos ahora caracterizar un poco la especificación, ya que al ser en lenguaje natural,
+existen muy pocas restricciones (prácticamente tan solo hemos mencionado no detallar
+precondiciones que no se puedan comprobar). Definiremos tres criterios de especificación:
+restrictividad, generalidad y claridad:
+La restrictividad nos dirá cuál es el conjunto válido dentro de todo el dominio. Cuando se
+realizan restricciones es común el cometer una serie de errores, como, por ejemplo, no
+especificar claramente los efectos de las operaciones, no especificar las excepciones y los
+casos límite, no especificar los requerimientos, etc.
+La generalidad hace referencia al posible uso del TDA, es decir, la especificación ha de
+hacerse lo suficientemente general como para que se pueda usar con frecuencia. Para hacer una
+especificación general hay que comprobar que lo que aparece en las precondiciones y
+postcondiciones es lo estrictamente necesario. También hay que sospechar de las partes
+operacionales de una especificación, ya que con estas partes operacionales se está indicando
+cómo hacer la implementación. Teniendo en cuenta esto, una especificación puede ser:
+* Denotacional: se da una lista de propiedades del conjunto especificado.
+* Operacional: Se dice cómo construir el conjunto especificado.
+
+Veamos un ejemplo de esto. Para ello consideremos la operación de buscar un elemento dentro de
+un vector. Una especificación denotacional consistiría en lo siguiente:
+
+int buscar(int *a, int x);
+Efecto:Si x(a, devuelve i / a[i]=x. En otro caso devuelve -1.
+
+Una especificación operacional sería la siguiente:
+
+int buscar(int *a, int x);
+Postcondición:Examina a[low],a[low+1]... y devuelve el índice del primer elemento que se
+encuentra igual a x. Indica fallo si no existe tal elemento.
+
+Terminamos hablando de la claridad. La especificación es para transmitirla, por lo que tiene
+que estar lo suficientemente clara como para que sea comprendida por el usuario de la
+especificación. En la claridad de una especificación influyen varios factores:
+* Que la especificación sea concisa.
+* Que la especificación no incluya redundancias.
+* Que la especificación tenga una estructura o formato determinado.
+
+Abstracción de iteración.
+Supongamos que queremos efectuar una misma operación sobre todos los elementos de un TDA
+complejo. Si el TDA lo permite debemos implementar un bucle para efectuar el cálculo a todos
+los elementos. Los iteradores son una generalización de los métodos de iteración disponibles en
+la mayoría de los lenguajes de programación y van a permitir al usuario resolver el problema
+propuesto sobre un TDA cualquiera.
+Para realizar la abstracción de iteración hay que encontrar un método general de iteración
+sobre el TDA que sea eficiente, y que pueda usarse de la siguiente manera: Para cada ítem i
+producido por el iterador A, realizar alguna acción con i. Este iterador, una vez definido,
+podrá utilizarse en cualquier parte del programa.
+Los iteradores, como operaciones que son del TDA, también habrán de ser especificados e
+implementados. Por convenio, la especificación va a seguir el formato de la abstracción
+procedural, indicando en su identificador que es un iterador.
+
+Veamos un ejemplo de iterador sobre el TDA conjunto:
+
+int iter_elemento(s:conj_ent);
+Precondiciones:S no puede ser modificado durante la ejecución del ciclo.
+Postcondiciones:Devuelve los elementos de S, una sola vez cada uno, y en orden arbitrario.
+
+El problema viene al intentar implementar este iterador al margen del TDA. ¿Cómo verificamos la
+precondición?. Si el TDA lo permitiera podríamos realizar cualquier test sobre él de forma que
+nos garantizase que no ha cambiado. Aún así, si queremos realizar un iterador general para
+aplicar a varios tipos de datos abstractos, el problema se complicaría todavía más.
+Nosotros proponemos insertar el iterador como una primitiva más del TDA, por lo que el problema
+termina ya que ahora el control es directamente nuestro y es realmente simple resolverlo.
+Otra posible solución es el uso de Tipos generadores como abstracción de iteración. En Pascal,
+C y otros lenguajes de uso común no existen los iteradores de TDA. Para resolver este problema
+se define un tipo de datos abstracto, llamado tipo generador, que realizará las funciones
+destinadas al iterador. Las operaciones de este tipo generador son las siguientes:
+* Función de creación del iterador.
+* Función para determinar si aún quedan elementos.
+* Función para acceder al elemento siguiente.
+* Función de destrucción del iterador.
+
+De esta forma, podemos crear un estándar de iteradores que será válido para cualquier TDA. La
+desventaja es que necesitamos incluir en nuestro TDA dos primitivas para comprobar si quedan
+elementos y acceder al siguiente elemento, siendo estas primitivas muy peligrosas ya que,
+seguramente, se posibilita el acceso a los datos por sitios no deseados.
+La primera propuesta es más fiable, aunque requiere un mayor esfuerzo, pero, por otro lado, si
+hacemos buenos diseños, tendremos que implementarla una sola vez.
